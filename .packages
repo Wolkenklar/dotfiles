@@ -4,5 +4,10 @@ polybar
 picom
 zsh
 feh
+nsxiv
 unzip
-i3lock-color
++thunar
++thunar-archive-plugin
++xarchiver
++tumbler
++ffmpegthumbnailer
