@@ -69,6 +69,7 @@ Plug 'jasonccox/vim-wayland-clipboard'
 Plug 'elkowar/yuck.vim'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neovim/nvim-lspconfig'
 " Plug 'itspriddle/vim-shellcheck'
 call plug#end()
 
@@ -118,18 +119,35 @@ nnoremap <F8> :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
 " replace char mode)
 nnoremap <C-i> i_<Esc>r
 
-lua <<EOF
-vim.opt.list = true
-vim.opt.listchars:append("space:⋅")
-vim.opt.listchars:append("eol:↴")
-
-require("indent_blankline").setup {
-    space_char_blankline = " ",
-    show_current_context = true,
-    show_current_context_start = true,
-}
-EOF
+" persistent history / undo
+if !isdirectory("/tmp/.vim-undo-dir")
+    call mkdir("/tmp/.vim-undo-dir", "", 0700)
+endif
+set undodir=/tmp/.vim-undo-dir
+set undofile
 
 " make d delete and not cut text
 nnoremap d "_d
 vnoremap d "_d
+
+lua <<EOF
+vim.opt.list = true
+vim.opt.listchars:append("space:·")
+vim.opt.listchars:append("eol:↴")
+
+local highlight = {
+  "ColorColumn",
+  "Whitespace",
+}
+require("ibl").setup {
+  indent = { highlight = highlight, char = "" },
+  whitespace = {
+    highlight = highlight,
+    remove_blankline_trail = false,
+  },
+  scope = { enabled = false },
+}
+
+require'lspconfig'.tsserver.setup{}
+require'lspconfig'.svelte.setup{}
+EOF
